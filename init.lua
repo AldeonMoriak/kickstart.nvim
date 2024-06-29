@@ -181,6 +181,7 @@ vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
 vim.keymap.set({ 'n', 'v' }, '<leader>D', [[ggdG]])
 vim.keymap.set('n', '<leader>Y', [[gg"+yG]])
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -228,6 +229,14 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- Godot
+local gdproject = io.open(vim.fn.getcwd() .. '/project.godot', 'r')
+print(gdproject)
+if gdproject then
+  io.close(gdproject)
+  vim.fn.serverstart './godothost'
+end
+
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -253,6 +262,7 @@ require('lazy').setup({
   --    require('Comment').setup({})
 
   -- "gc" to comment visual regions/lines
+  'mbbill/undotree',
   { 'numToStr/Comment.nvim', opts = {} },
 
   -- Here is a more advanced example where we pass configuration
@@ -570,6 +580,7 @@ require('lazy').setup({
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      require('lspconfig').gdscript.setup(capabilities)
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -580,6 +591,20 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      if gdproject then
+        local port = os.getenv 'GDScript_Port' or '6005'
+        local cmd = vim.lsp.rpc.connect('127.0.0.1', port)
+        local pipe = '/tmp/godot.pipe' -- I use /tmp/godot.pipe
+        vim.lsp.start {
+          name = 'Godot',
+          cmd = cmd,
+          root_dir = vim.fs.dirname(vim.fs.find({ 'project.godot', '.git' }, { upward = true })[1]),
+          on_attach = function(client, bufnr)
+            vim.api.nvim_command('echo serverstart("' .. pipe .. '")')
+          end,
+        }
+      end
+
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -907,7 +932,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
