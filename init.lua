@@ -90,6 +90,10 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.colorcolumn = '80'
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 0
+vim.opt.shiftwidth = 2
+vim.opt.smarttab = true
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
@@ -231,7 +235,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Godot
 local gdproject = io.open(vim.fn.getcwd() .. '/project.godot', 'r')
-print(gdproject)
+print('gdproject', gdproject)
 if gdproject then
   io.close(gdproject)
   vim.fn.serverstart './godothost'
@@ -617,7 +621,21 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
-        --
+
+        volar = {
+          filetypes = { 'vue' },
+          init_options = {
+            vue = {
+              hybridMode = false,
+            },
+            typescript = {
+              -- Global install of typescript
+              --tsdk = '~/.nvm/versions/node/v20.11.1/lib/node_modules/typescript',
+              -- Current project version and what I will likely use
+              tsdk = vim.fn.getcwd() .. 'node_modules/typescript/lib',
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = {...},
@@ -700,6 +718,8 @@ require('lazy').setup({
         -- is found.
         typescript = { { 'prettierd', 'prettier' } },
         typescriptreact = { { 'prettierd', 'prettier' } },
+        vue = { { 'prettierd', 'prettier' } },
+        typescriptvue = { { 'prettierd', 'prettier' } },
         javascript = { { 'prettierd', 'prettier' } },
         javascriptreact = { { 'prettierd', 'prettier' } },
         html = { { 'prettierd', 'prettier' } },
