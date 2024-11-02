@@ -157,7 +157,7 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 16
+vim.opt.scrolloff = 24
 
 vim.opt.wrap = false
 
@@ -173,6 +173,15 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+-- Diagnostic config
+vim.diagnostic.config {
+  virtual_text = false,
+  float = {
+    border = 'rounded',
+    focusable = true,
+  },
+}
 
 -- Custom keymaps
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>')
@@ -532,6 +541,10 @@ require('lazy').setup({
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
+
+          vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+            border = 'rounded',
+          })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
