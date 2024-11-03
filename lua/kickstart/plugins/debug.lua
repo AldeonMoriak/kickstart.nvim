@@ -67,7 +67,6 @@ return {
       },
     }
 
-<<<<<<< HEAD
     dap.adapters.godot = {
       type = 'server',
       host = '127.0.0.1',
@@ -100,8 +99,6 @@ return {
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
     end, { desc = 'Debug: Set Breakpoint' })
 
-=======
->>>>>>> 2ba39c69736597b60f6033aa3f8526e7c28343d5
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
     dapui.setup {
