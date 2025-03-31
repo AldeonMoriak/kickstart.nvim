@@ -678,6 +678,15 @@ require('lazy').setup({
         }
       end
 
+      local function organize_imports()
+        local params = {
+          command = '_typescript.organizeImports',
+          arguments = { vim.api.nvim_buf_get_name(0) },
+          title = '',
+        }
+        vim.lsp.buf.execute_command(params)
+      end
+
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -689,7 +698,17 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
+        tsserver = {
+          root_dir = require('lspconfig').util.root_pattern { 'package.json', 'tsconfig.json' },
+          single_file_support = false,
+          settings = {},
+          commands = {
+            OrganizeImports = {
+              organize_imports,
+              description = 'Organize Imports',
+            },
+          },
+        },
 
         volar = {
           filetypes = { 'vue' },
@@ -751,6 +770,11 @@ require('lazy').setup({
             require('lspconfig')[server_name].setup(server)
           end,
         },
+      }
+      require('lspconfig').denols.setup {
+        root_dir = require('lspconfig').util.root_pattern { 'deno.json', 'deno.jsonc' },
+        single_file_support = false,
+        settings = {},
       }
     end,
   },

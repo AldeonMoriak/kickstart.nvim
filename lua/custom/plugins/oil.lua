@@ -13,6 +13,11 @@ return {
         view_options = {
           show_hidden = true,
         },
+        git = {
+          mv = function(src_path, dest_path)
+            return true
+          end,
+        },
       }
 
       -- Open parent directory in current window
