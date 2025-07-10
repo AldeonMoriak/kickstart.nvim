@@ -107,7 +107,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -130,7 +130,7 @@ vim.o.breakindent = true
 vim.o.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.o.ignorecase = false
+vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
@@ -742,7 +742,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       if gdproject then
         local port = os.getenv 'GDScript_Port' or '6005'
-        local cmd = vim.lsp.rpc.connect('127.0.0.1', port)
+        local cmd = vim.lsp.rpc.connect('127.0.0.1', tonumber(port))
         local pipe = '/tmp/godot.pipe' -- I use /tmp/godot.pipe
         vim.lsp.start {
           name = 'Godot',
@@ -762,6 +762,8 @@ require('lazy').setup({
         }
         vim.lsp.buf.execute_command(params)
       end
+
+      local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
 
       local servers = {
         -- clangd = {},
@@ -784,20 +786,30 @@ require('lazy').setup({
               description = 'Organize Imports',
             },
           },
+          -- init_options = {
+          --   plugins = {
+          --     {
+          --       name = '@vue/typescript-plugin',
+          --       location = vue_language_server_path,
+          --       languages = { 'vue' },
+          --     },
+          --   },
+          -- },
+          -- filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
-
-        volar = {
+        -- vue_ls = {},
+        vue_ls = {
           filetypes = { 'vue' },
           init_options = {
             vue = {
               hybridMode = false,
             },
-            typescript = {
-              -- Global install of typescript
-              --tsdk = '~/.nvm/versions/node/v20.11.1/lib/node_modules/typescript',
-              -- Current project version and what I will likely use
-              tsdk = vim.fn.getcwd() .. 'node_modules/typescript/lib',
-            },
+            -- typescript = {
+            --   -- Global install of typescript
+            --   --tsdk = '~/.nvm/versions/node/v20.11.1/lib/node_modules/typescript',
+            --   -- Current project version and what I will likely use
+            --   tsdk = vim.fn.getcwd() .. 'node_modules/typescript/lib',
+            -- },
           },
         },
         -- But for many setups, the LSP (`ts_ls`) will work just fine
@@ -905,6 +917,9 @@ require('lazy').setup({
         html = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
         scss = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+        xml = { 'xmlformatter', stop_after_first = true },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
