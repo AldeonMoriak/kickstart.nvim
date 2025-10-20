@@ -94,6 +94,8 @@ vim.o.tabstop = 2
 vim.o.softtabstop = 0
 vim.o.shiftwidth = 2
 vim.o.smarttab = true
+vim.o.encoding = 'utf-8'
+vim.o.fileencoding = 'utf-8'
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
